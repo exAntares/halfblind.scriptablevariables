@@ -1,4 +1,5 @@
 ﻿namespace HalfBlind.ScriptableVariables {
+    using HalfBlind.Attributes;
     using System;
     using System.Collections.Generic;
     using UnityEngine;
@@ -6,6 +7,8 @@
     [CreateAssetMenu(fileName = "OnGameEvent", menuName = "GameEvents/ScriptableEvent")]
     public class ScriptableGameEvent : ScriptableObject {
         private HashSet<Action> _callbacks = new HashSet<Action>();
+        [SerializeField, StringButton(nameof(SendEvent), 50, StringButtonAttribute.Visibility.OnlyPlayMode)]
+        private string _hiddenButton;
 
         private void OnEnable() {
             _callbacks.Clear();
@@ -15,8 +18,6 @@
             _callbacks.Clear();
         }
 
-        [Sirenix.OdinInspector.HideInEditorMode]
-        //[Sirenix.OdinInspector.Button(Sirenix.OdinInspector.ButtonSizes.Gigantic)]
         public virtual void SendEvent() {
             foreach (var callback in _callbacks) {
                 callback();
