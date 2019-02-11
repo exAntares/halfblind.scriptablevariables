@@ -10,7 +10,7 @@ namespace HalfBlind.ScriptableVariables {
     public abstract class GlobalCooldown : ScriptableObject {
         [UniqueIdentifier]
         [SerializeField]
-        private string _saveKey;
+        private string _saveKey = null;
         [SerializeField, HideInPlayMode]
         private long _InitialCooldownInSeconds;
 

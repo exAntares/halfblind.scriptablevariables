@@ -1,7 +1,9 @@
 ﻿namespace HalfBlind.ScriptableVariables {
+    using System;
     using UnityEngine;
 
     public abstract class ScriptableVariable : ScriptableObject {
+        public Action OnValueChanged;
         public abstract object GetValue();
         public abstract void FromString(string value);
     }
@@ -10,12 +12,16 @@
         [SerializeField, Sirenix.OdinInspector.HideInPlayMode]
         protected T _initialValue;
 
-        private T _runtimeValue;
+        [NonSerialized]
+        protected T _runtimeValue;
 
         [Sirenix.OdinInspector.ShowInInspector, Sirenix.OdinInspector.HideInEditorMode]
         public virtual T Value {
             get { return _runtimeValue; }
-            set { _runtimeValue = value; }
+            set {
+                _runtimeValue = value;
+                OnValueChanged?.Invoke();
+            }
         }
 
         protected virtual void OnEnable() {
