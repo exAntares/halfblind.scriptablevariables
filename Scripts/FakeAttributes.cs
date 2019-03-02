@@ -1,4 +1,4 @@
-﻿#if !ODIN
+﻿#if !ODIN_INSPECTOR
 using System;
 
 namespace Sirenix.OdinInspector {
