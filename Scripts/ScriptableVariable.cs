@@ -9,23 +9,32 @@
     }
 
     public abstract class ScriptableVariable<T> : ScriptableVariable {
-        [SerializeField, Sirenix.OdinInspector.HideInPlayMode]
-        protected T _initialValue;
+        public Action<T> OnTValueChanged;
 
-        [NonSerialized]
-        protected T _runtimeValue;
+        [SerializeField, Sirenix.OdinInspector.HideInPlayMode]
+        internal T _initialValue;
+
+        [NonSerialized] protected ScriptableVariable<T> _runtimeInstance;
 
         [Sirenix.OdinInspector.ShowInInspector, Sirenix.OdinInspector.HideInEditorMode]
         public virtual T Value {
-            get { return _runtimeValue; }
+            get { return _runtimeInstance._initialValue; }
             set {
-                _runtimeValue = value;
+                _runtimeInstance._initialValue = value;
+                OnTValueChanged?.Invoke(value);
                 OnValueChanged?.Invoke();
             }
         }
 
         protected virtual void OnEnable() {
+            _runtimeInstance = this;
             Value = _initialValue;
+#if UNITY_EDITOR
+            var assetPath = UnityEditor.AssetDatabase.GetAssetPath(this);
+            if (!string.IsNullOrEmpty(assetPath)) {
+                _runtimeInstance = Instantiate(this);
+            }
+#endif
         }
 
         public override object GetValue() {

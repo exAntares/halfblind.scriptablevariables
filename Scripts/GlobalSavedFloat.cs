@@ -16,8 +16,8 @@
                     return _initialValue;
                 }
 
-                GetSaveHandler()?.Load<float>(_saveKey, out _runtimeValue);
-                return _runtimeValue;
+                GetSaveHandler()?.Load<float>(_saveKey, out _runtimeInstance._initialValue);
+                return _runtimeInstance._initialValue;
             }
             set {
                 if (Application.isPlaying) {
