@@ -28,7 +28,6 @@
 
         protected virtual void OnEnable() {
             _runtimeInstance = this;
-            Value = _initialValue;
 #if UNITY_EDITOR
             var assetPath = UnityEditor.AssetDatabase.GetAssetPath(this);
             if (!string.IsNullOrEmpty(assetPath)) {
