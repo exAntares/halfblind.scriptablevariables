@@ -12,21 +12,24 @@ namespace HalfBlind.ScriptableVariables {
 
         public override bool Value {
             get {
+#if UNITY_EDITOR
                 if (!Application.isPlaying) {
                     return _initialValue;
                 }
-
-                GetSaveHandler()?.Load<bool>(_saveKey, out _runtimeInstance._initialValue);
+#endif
+                GetSaveHandler().Load<bool>(_saveKey, out _runtimeInstance._initialValue);
                 return _runtimeInstance._initialValue;
             }
             set {
-                if (Application.isPlaying) {
-                    var _saveSystem = GetSaveHandler();
-                    if (_saveSystem != null) {
-                        var oldValue = Value;
-                        _saveSystem.Save<bool>(_saveKey, value);
-                        OnValueChanged?.Invoke();
-                    }
+#if UNITY_EDITOR
+                if (!Application.isPlaying) {
+                    return;
+                }
+#endif
+                var _saveSystem = GetSaveHandler();
+                if (_saveSystem != null) {
+                    _saveSystem.Save<bool>(_saveKey, value);
+                    OnValueChanged?.Invoke();
                 }
             }
         }
