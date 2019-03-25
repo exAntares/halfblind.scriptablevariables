@@ -17,7 +17,7 @@ namespace HalfBlind.ScriptableVariables {
                     return _initialValue;
                 }
 #endif
-                GetSaveHandler().Load<bool>(_saveKey, out _runtimeInstance._initialValue);
+                GetSaveHandler()?.Load<bool>(_saveKey, out _runtimeInstance._initialValue);
                 return _runtimeInstance._initialValue;
             }
             set {
