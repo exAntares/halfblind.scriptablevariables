@@ -28,8 +28,11 @@ namespace HalfBlind.ScriptableVariables {
 #endif
                 var _saveSystem = GetSaveHandler();
                 if (_saveSystem != null) {
-                    _saveSystem.Save<bool>(_saveKey, value);
-                    OnValueChanged?.Invoke();
+                    if(Value != value) {
+                        _saveSystem.Save<bool>(_saveKey, value);
+                        OnTValueChanged?.Invoke(value);
+                        OnValueChanged?.Invoke();
+                    }
                 }
             }
         }

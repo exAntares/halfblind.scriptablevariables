@@ -28,8 +28,11 @@
 #endif
                 var _saveSystem = GetSaveHandler();
                 if (_saveSystem != null) {
-                    _saveSystem.Save<float>(_saveKey, value);
-                    OnValueChanged?.Invoke();
+                    if(Value != value) {
+                        _saveSystem.Save<float>(_saveKey, value);
+                        OnTValueChanged?.Invoke(value);
+                        OnValueChanged?.Invoke();
+                    }
                 }
             }
         }
