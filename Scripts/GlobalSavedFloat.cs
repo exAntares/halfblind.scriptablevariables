@@ -17,8 +17,13 @@
                     return _initialValue;
                 }
 #endif
-                GetSaveHandler()?.Load<float>(_saveKey, out _runtimeInstance._initialValue);
-                return _runtimeInstance._initialValue;
+                var result = _initialValue;
+                var saveHandler = GetSaveHandler();
+                if (saveHandler != null && saveHandler.Load<float>(_saveKey, out result)) {
+                    return result;
+                }
+
+                return _initialValue;
             }
             set {
 #if UNITY_EDITOR

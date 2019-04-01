@@ -17,8 +17,13 @@ namespace HalfBlind.ScriptableVariables {
                     return _initialValue;
                 }
 #endif
-                GetSaveHandler()?.Load<bool>(_saveKey, out _runtimeInstance._initialValue);
-                return _runtimeInstance._initialValue;
+                var result = _initialValue;
+                var savehandler = GetSaveHandler();
+                if (savehandler != null && savehandler.Load<bool>(_saveKey, out result)) {
+                    return result;
+                }
+
+                return _initialValue;
             }
             set {
 #if UNITY_EDITOR
