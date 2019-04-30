@@ -1,0 +1,11 @@
+{
+    "name": "halfblind.scriptablevariables",
+    "displayName": "halfblind.scriptablevariables",
+    "version": "1.0.0",
+    "unity": "2018.1",
+    "description": "This package contains the concept of scriptablevariables",
+    "keywords": ["Scriptable"],
+    "category": "Visual Scripting",
+    "dependencies": {
+    }
+}
