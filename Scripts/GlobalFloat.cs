@@ -1,7 +1,7 @@
 ﻿namespace HalfBlind.ScriptableVariables {
     using UnityEngine;
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !ODIN_INSPECTOR
     [UnityEditor.CustomEditor(typeof(GlobalFloat))]
     public class GlobalFloatEditor: UnityEditor.Editor {
 
