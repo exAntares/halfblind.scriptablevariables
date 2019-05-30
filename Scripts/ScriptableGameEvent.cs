@@ -19,7 +19,8 @@
         }
 
         public virtual void SendEvent() {
-            foreach (var callback in _callbacks) {
+            var callbacks = new HashSet<Action>(_callbacks);
+            foreach (var callback in callbacks) {
                 callback();
             }
         }
