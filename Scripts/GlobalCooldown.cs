@@ -80,13 +80,23 @@ namespace HalfBlind.ScriptableVariables {
             }
 
             startTimeTicks = DateTime.Now.Ticks;
-            saveSystem.Save<long>(saveKey, startTimeTicks);
+            if(saveSystem != null) {
+                saveSystem.Save<long>(saveKey, startTimeTicks);
+            } else {
+                Debug.LogError($"Missing {nameof(ISave)}");
+            }
+            
             return startTimeTicks;
         }
 
         public static long GetSavedStartTimeTicks(ISave saveSystem, string saveKey) {
-            long lastTime;
-            saveSystem.Load<long>(saveKey, out lastTime);
+            long lastTime = 0;
+            if (saveSystem != null) {
+                saveSystem.Load<long>(saveKey, out lastTime);
+            } else {
+                Debug.LogError($"Missing {nameof(ISave)}");
+            }
+            
             return lastTime;
         }
 
