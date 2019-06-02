@@ -36,10 +36,22 @@ namespace HalfBlind.ScriptableVariables {
         public double GetRemainingSecondsTime() {
             var saveSystem = GetSaveHandler();
             if(saveSystem == null) { return 0; }
-            long startTimeTicks = GetSavedStartTimeTicks(saveSystem, _saveKey, (double)CooldownInSeconds);
+            long startTimeTicks = GetSavedStartTimeTicks(saveSystem, _saveKey);
             double elapsedSeconds = (DateTime.Now - new DateTime(startTimeTicks)).TotalSeconds;
             var diffTime = CooldownInSeconds - elapsedSeconds;
             return diffTime > 0 ? diffTime : 0;
+        }
+
+        [Button]
+        public void ReduceCooldown(double secondsToReduce) {
+#if UNITY_EDITOR
+            if (!Application.isPlaying) { return; }
+#endif
+            if (!IsOnCooldown()) { return; }
+            secondsToReduce = secondsToReduce > 0 ? -secondsToReduce : secondsToReduce;
+            var savedStartTimeTicks = GetSavedStartTimeTicks(GetSaveHandler(), _saveKey);
+            var newSavedStartTimeTicks = new DateTime(savedStartTimeTicks).AddSeconds(secondsToReduce).Ticks;
+            GetSaveHandler().Save<long>(_saveKey, newSavedStartTimeTicks);
         }
 
         [HideInEditorMode]
@@ -54,24 +66,25 @@ namespace HalfBlind.ScriptableVariables {
         [HideInEditorMode]
         [Button]
         public bool IsOnCooldown() {
-            var startTimeTicks = GetSavedStartTimeTicks(GetSaveHandler(), _saveKey, (double)CooldownInSeconds);
+            var startTimeTicks = GetSavedStartTimeTicks(GetSaveHandler(), _saveKey);
             var isOnCooldown = IsOnCooldown(startTimeTicks, CooldownInSeconds);
             return isOnCooldown;
         }
 
         public static long SaveStartTimeTicks(ISave saveSystem, string saveKey, long cooldownSeconds) {
-            long startTimeTicks = GetSavedStartTimeTicks(saveSystem, saveKey, (double)cooldownSeconds);
+            long startTimeTicks = GetSavedStartTimeTicks(saveSystem, saveKey);
             var isOnCooldown = IsOnCooldown(startTimeTicks, cooldownSeconds);
             if (isOnCooldown) {
                 Debug.Log($"{nameof(isOnCooldown)}:{isOnCooldown} cooldown started: {new DateTime(startTimeTicks)} and lasts {cooldownSeconds}");
                 return startTimeTicks;
             }
 
-            saveSystem.Save<long>(saveKey, DateTime.Now.Ticks);
+            startTimeTicks = DateTime.Now.Ticks;
+            saveSystem.Save<long>(saveKey, startTimeTicks);
             return startTimeTicks;
         }
 
-        public static long GetSavedStartTimeTicks(ISave saveSystem, string saveKey, double cooldownSeconds) {
+        public static long GetSavedStartTimeTicks(ISave saveSystem, string saveKey) {
             long lastTime;
             saveSystem.Load<long>(saveKey, out lastTime);
             return lastTime;
