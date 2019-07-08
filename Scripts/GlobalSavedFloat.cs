@@ -8,22 +8,24 @@
         [SerializeField]
         private string _saveKey = null;
 
+        protected float _backfield;
+        protected bool _isLoaded;
         public abstract ISave GetSaveHandler();
 
         public override float Value {
             get {
-#if UNITY_EDITOR
-                if (!Application.isPlaying) {
-                    return _initialValue;
-                }
-#endif
-                var result = _initialValue;
                 var saveHandler = GetSaveHandler();
-                if (saveHandler != null && saveHandler.Load<float>(_saveKey, out result)) {
-                    return result;
+                if (!_isLoaded) {
+                    if (saveHandler != null) {
+                        _isLoaded = true;
+                        if(!saveHandler.Load<float>(_saveKey, out _backfield)) {
+                            _backfield = _initialValue;
+                        }
+                    } else {
+                        Debug.LogError($"Fail to find saveHandler");  
+                    }
                 }
-
-                return _initialValue;
+                return _backfield;
             }
             set {
 #if UNITY_EDITOR
@@ -33,9 +35,10 @@
 #endif
                 var _saveSystem = GetSaveHandler();
                 if (_saveSystem != null) {
-                    if(Value != value) {
-                        _saveSystem.Save<float>(_saveKey, value);
-                        OnTValueChanged?.Invoke(value);
+                    if(_backfield != value) {
+                        _backfield = value;
+                        _saveSystem.Save<float>(_saveKey, _backfield);
+                        OnTValueChanged?.Invoke(_backfield);
                         OnValueChanged?.Invoke();
                     }
                 }
