@@ -44,5 +44,10 @@
                 }
             }
         }
+
+        protected override void OnEnable() {
+            _isLoaded = false;
+            base.OnEnable();
+        }
     }
 }
