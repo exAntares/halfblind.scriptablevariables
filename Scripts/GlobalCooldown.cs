@@ -17,6 +17,8 @@ namespace HalfBlind.ScriptableVariables {
         [ShowInInspector, HideInEditorMode]
         public long CooldownInSeconds { get; set; }
 
+        private long? SavedStartTicks;
+
         public Action OnCooldownStarted;
 
         public string SaveKey { get { return _saveKey; } }
@@ -35,9 +37,12 @@ namespace HalfBlind.ScriptableVariables {
 
         public double GetRemainingSecondsTime() {
             var saveSystem = GetSaveHandler();
-            if(saveSystem == null) { return 0; }
-            long startTimeTicks = GetSavedStartTimeTicks(saveSystem, _saveKey);
-            double elapsedSeconds = (DateTime.Now - new DateTime(startTimeTicks)).TotalSeconds;
+            if (!SavedStartTicks.HasValue) {
+                if (saveSystem == null) { return 0; }
+                SavedStartTicks = GetSavedStartTimeTicks(saveSystem, _saveKey);
+            }
+
+            double elapsedSeconds = (DateTime.Now - new DateTime(SavedStartTicks.Value)).TotalSeconds;
             var diffTime = CooldownInSeconds - elapsedSeconds;
             return diffTime > 0 ? diffTime : 0;
         }
@@ -50,36 +55,30 @@ namespace HalfBlind.ScriptableVariables {
             if (!IsOnCooldown()) { return; }
             secondsToReduce = secondsToReduce > 0 ? -secondsToReduce : secondsToReduce;
             var savedStartTimeTicks = GetSavedStartTimeTicks(GetSaveHandler(), _saveKey);
-            var newSavedStartTimeTicks = new DateTime(savedStartTimeTicks).AddSeconds(secondsToReduce).Ticks;
-            GetSaveHandler().Save<long>(_saveKey, newSavedStartTimeTicks);
+            SavedStartTicks = new DateTime(savedStartTimeTicks).AddSeconds(secondsToReduce).Ticks;
+            GetSaveHandler().Save<long>(_saveKey, SavedStartTicks.Value);
         }
 
         [HideInEditorMode]
         [Button]
         public void StartCooldown() {
-            if (IsOnCooldown()) { return; }
-            var startTimeTicks = SaveStartTimeTicks(GetSaveHandler(), _saveKey, CooldownInSeconds);
+            if (IsOnCooldown()) {
+                Debug.Log($"{nameof(StartCooldown)} cooldown was already started: {GetRemainingSecondsTime()}s ago and lasts {CooldownInSeconds}");
+                return;
+            }
+            SavedStartTicks = SaveStartTimeTicks(GetSaveHandler(), _saveKey, CooldownInSeconds);
             OnCooldownStarted?.Invoke();
-            Debug.Log($"{name} Cooldown Started at:{new DateTime(startTimeTicks)} duration: {CooldownInSeconds}s");
+            Debug.Log($"{name} Cooldown Started at:{new DateTime(SavedStartTicks.Value)} duration: {CooldownInSeconds}s");
         }
 
         [HideInEditorMode]
         [Button]
         public bool IsOnCooldown() {
-            var startTimeTicks = GetSavedStartTimeTicks(GetSaveHandler(), _saveKey);
-            var isOnCooldown = IsOnCooldown(startTimeTicks, CooldownInSeconds);
-            return isOnCooldown;
+            return GetRemainingSecondsTime() > 0;
         }
 
-        public static long SaveStartTimeTicks(ISave saveSystem, string saveKey, long cooldownSeconds) {
-            long startTimeTicks = GetSavedStartTimeTicks(saveSystem, saveKey);
-            var isOnCooldown = IsOnCooldown(startTimeTicks, cooldownSeconds);
-            if (isOnCooldown) {
-                Debug.Log($"{nameof(isOnCooldown)}:{isOnCooldown} cooldown started: {new DateTime(startTimeTicks)} and lasts {cooldownSeconds}");
-                return startTimeTicks;
-            }
-
-            startTimeTicks = DateTime.Now.Ticks;
+        private static long SaveStartTimeTicks(ISave saveSystem, string saveKey, long cooldownSeconds) {
+            var startTimeTicks = DateTime.Now.Ticks;
             if(saveSystem != null) {
                 saveSystem.Save<long>(saveKey, startTimeTicks);
             } else {
@@ -89,7 +88,7 @@ namespace HalfBlind.ScriptableVariables {
             return startTimeTicks;
         }
 
-        public static long GetSavedStartTimeTicks(ISave saveSystem, string saveKey) {
+        private static long GetSavedStartTimeTicks(ISave saveSystem, string saveKey) {
             long lastTime = 0;
             if (saveSystem != null) {
                 saveSystem.Load<long>(saveKey, out lastTime);
@@ -98,11 +97,6 @@ namespace HalfBlind.ScriptableVariables {
             }
             
             return lastTime;
-        }
-
-        public static bool IsOnCooldown(long startTimeTicks, long cooldownSeconds) {
-            TimeSpan timeSpan = DateTime.Now - new DateTime(startTimeTicks);
-            return timeSpan.TotalSeconds < cooldownSeconds;
         }
     }
 }
