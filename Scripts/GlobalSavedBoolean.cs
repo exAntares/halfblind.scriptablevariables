@@ -35,8 +35,8 @@ namespace HalfBlind.ScriptableVariables {
                 if (_saveSystem != null) {
                     if(Value != value) {
                         _saveSystem.Save<bool>(_saveKey, value);
-                        OnTValueChanged?.Invoke(value);
-                        OnValueChanged?.Invoke();
+                        TValueChanged(value);
+                        ValueChanged();
                     }
                 }
             }

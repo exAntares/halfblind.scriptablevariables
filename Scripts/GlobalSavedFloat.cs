@@ -38,8 +38,8 @@
                     if(_backfield != value) {
                         _backfield = value;
                         _saveSystem.Save<float>(_saveKey, _backfield);
-                        OnTValueChanged?.Invoke(_backfield);
-                        OnValueChanged?.Invoke();
+                        TValueChanged(_backfield);
+                        ValueChanged();
                     }
                 }
             }

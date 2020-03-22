@@ -3,13 +3,17 @@
     using UnityEngine;
 
     public abstract class ScriptableVariable : ScriptableObject {
-        public Action OnValueChanged;
+        public event Action OnValueChanged;
         public abstract object GetValue();
         public abstract void FromString(string value);
+
+        protected void ValueChanged() {
+            OnValueChanged?.Invoke();
+        }
     }
 
     public abstract class ScriptableVariable<T> : ScriptableVariable {
-        public Action<T> OnTValueChanged;
+        public event Action<T> OnTValueChanged;
 
         [SerializeField, Sirenix.OdinInspector.HideInPlayMode]
         internal T _initialValue;
@@ -21,11 +25,15 @@
             get { return _runtimeInstance._initialValue; }
             set {
                 _runtimeInstance._initialValue = value;
-                OnTValueChanged?.Invoke(value);
-                OnValueChanged?.Invoke();
+                TValueChanged(value);
+                ValueChanged();
             }
         }
 
+        protected void TValueChanged(T value) {
+            OnTValueChanged?.Invoke(value);
+        }
+        
         protected virtual void OnEnable() {
             _runtimeInstance = this;
 #if UNITY_EDITOR
