@@ -14,7 +14,7 @@
         [SerializeField, Sirenix.OdinInspector.HideInPlayMode]
         internal T _initialValue;
 
-        [NonSerialized] protected ScriptableVariable<T> _runtimeInstance;
+        [NonSerialized] private ScriptableVariable<T> _runtimeInstance;
 
         [Sirenix.OdinInspector.ShowInInspector, Sirenix.OdinInspector.HideInEditorMode]
         public virtual T Value {
