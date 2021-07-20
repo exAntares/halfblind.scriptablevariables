@@ -7,6 +7,5 @@
     "keywords": ["Scriptable"],
     "category": "Visual Scripting",
     "dependencies": {
-        "halfblind.attributes": "https://github.com/exAntares/halfblind.attributes.git#master"
     }
 }
