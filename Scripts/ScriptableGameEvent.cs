@@ -8,7 +8,7 @@
     public class ScriptableGameEvent : ScriptableObject {
         private HashSet<Action> _callbacks = new HashSet<Action>();
         [SerializeField, StringButton(nameof(SendEvent), 50, StringButtonAttribute.Visibility.OnlyPlayMode)]
-        private string _hiddenButton;
+        private string _hiddenButton = "_button";
 
         private void OnEnable() {
             _callbacks.Clear();
