@@ -1,7 +1,7 @@
 {
     "name": "com.halfblind.scriptablevariables",
-    "displayName": "ScriptableVariables",
-    "version": "1.0.2",
+    "displayName": "HalfBlind ScriptableVariables",
+    "version": "1.0.3",
     "unity": "2018.1",
     "description": "This package contains the concept of scriptablevariables",
     "keywords": ["Scriptable"],
@@ -14,7 +14,7 @@
         "url":"https://github.com/exAntares/halfblind.scriptablevariables.git"
     },
     "dependencies": {
-        "com.halfblind.saveutils":"1.0.1",
+        "com.halfblind.saveutils":"1.0.2",
     	"com.halfblind.attributes":"1.0.0"
     }
 }
