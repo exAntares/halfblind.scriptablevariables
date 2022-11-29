@@ -7,7 +7,7 @@
     "keywords": ["Scriptable"],
     "category": "Visual Scripting",
     "publishConfig":{
-        "registry": "https://npm.pkg.github.com"
+        "registry": "https://npm.pkg.github.com/@exAntares"
     }
     "repository": {
         "type":"git",
