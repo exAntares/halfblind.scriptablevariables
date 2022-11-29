@@ -1,11 +1,13 @@
 {
-    "name": "halfblind.scriptablevariables",
-    "displayName": "HalfBlind.ScriptableVariables",
+    "name": "com.halfblind.scriptablevariables",
+    "displayName": "ScriptableVariables",
     "version": "1.0.0",
     "unity": "2018.1",
     "description": "This package contains the concept of scriptablevariables",
     "keywords": ["Scriptable"],
     "category": "Visual Scripting",
     "dependencies": {
+        "com.halfblind.saveutils":"1.0.0",
+    	"com.halfblind.attributes":"1.0.0"
     }
 }
