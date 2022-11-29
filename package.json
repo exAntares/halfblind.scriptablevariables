@@ -8,11 +8,11 @@
     "category": "Visual Scripting",
     "publishConfig":{
         "registry": "https://npm.pkg.github.com/@exAntares"
-    }
+    },
     "repository": {
         "type":"git",
         "url":"https://github.com/exAntares/halfblind.scriptablevariables.git"
-    }
+    },
     "dependencies": {
         "com.halfblind.saveutils":"1.0.0",
     	"com.halfblind.attributes":"1.0.0"
