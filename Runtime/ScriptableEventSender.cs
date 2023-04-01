@@ -12,8 +12,12 @@ namespace HalfBlind.ScriptableVariables {
             OnDestroy = 1 << 4,
             Update = 1 << 5,
         }
-        
+
+#if UNITY_2020_2_OR_NEWER
         [SerializeField] private ScriptableGameEvent _event = null!;
+#else
+        [SerializeField] private ScriptableGameEvent _event;
+#endif
         [SerializeField] private SendMode _sendMode;
 
         private void Awake() {
